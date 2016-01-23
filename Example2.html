@@ -6223,8 +6223,8 @@ Elm.Native.Graphics.Input.make = function(localRuntime) {
 	function customButton(message, up, hover, down)
 	{
 		return A3(Element.newElement,
-				  max3(up.props.width, hover.props.width, down.props.width),
-				  max3(up.props.height, hover.props.height, down.props.height),
+				  max3(up._0.props.width, hover._0.props.width, down._0.props.width),
+				  max3(up._0.props.height, hover._0.props.height, down._0.props.height),
 				  { ctor: 'Custom',
 					type: 'CustomButton',
 					render: renderCustomButton,
@@ -6796,11 +6796,11 @@ Elm.Automaton.make = function (_elm) {
                                   ,loop: loop
                                   ,count: count
                                   ,average: average};
-};Elm.DragAndDrop = Elm.DragAndDrop || {};
-Elm.DragAndDrop.make = function (_elm) {
+};Elm.Drag = Elm.Drag || {};
+Elm.Drag.make = function (_elm) {
    "use strict";
-   _elm.DragAndDrop = _elm.DragAndDrop || {};
-   if (_elm.DragAndDrop.values) return _elm.DragAndDrop.values;
+   _elm.Drag = _elm.Drag || {};
+   if (_elm.Drag.values) return _elm.Drag.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Automaton = Elm.Automaton.make(_elm),
    $Basics = Elm.Basics.make(_elm),
@@ -6975,19 +6975,19 @@ Elm.DragAndDrop.make = function (_elm) {
       $Maybe.map($Basics.snd),
       A2(trackMany,btm(inside),A2($Signal.map,btm,hover)));
    });
-   return _elm.DragAndDrop.values = {_op: _op
-                                    ,mouseEvents: mouseEvents
-                                    ,track: track
-                                    ,trackMany: trackMany
-                                    ,automaton: automaton
-                                    ,StartAt: StartAt
-                                    ,MoveFromTo: MoveFromTo
-                                    ,EndAt: EndAt
-                                    ,Lift: Lift
-                                    ,MoveBy: MoveBy
-                                    ,Release: Release
-                                    ,Mouse: Mouse
-                                    ,Hover: Hover};
+   return _elm.Drag.values = {_op: _op
+                             ,mouseEvents: mouseEvents
+                             ,track: track
+                             ,trackMany: trackMany
+                             ,automaton: automaton
+                             ,StartAt: StartAt
+                             ,MoveFromTo: MoveFromTo
+                             ,EndAt: EndAt
+                             ,Lift: Lift
+                             ,MoveBy: MoveBy
+                             ,Release: Release
+                             ,Mouse: Mouse
+                             ,Hover: Hover};
 };Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
@@ -6997,7 +6997,7 @@ Elm.Main.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Debug = Elm.Debug.make(_elm),
-   $DragAndDrop = Elm.DragAndDrop.make(_elm),
+   $Drag = Elm.Drag.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Graphics$Input = Elm.Graphics.Input.make(_elm),
@@ -7037,7 +7037,7 @@ Elm.Main.make = function (_elm) {
          return h ? $Maybe.Just(1) : $Maybe.Nothing;
       }(_p5));
    },
-   putInBox($Graphics$Element.leftAligned($Text.fromString("drag-and-drop me"))));
+   putInBox($Graphics$Element.leftAligned($Text.fromString("drag me around"))));
    var box2 = A2($Graphics$Input.hoverable,
    function (_p6) {
       return A2($Signal.message,
@@ -7095,13 +7095,7 @@ Elm.Main.make = function (_elm) {
       {ctor: "_Tuple2"
       ,_0: {ctor: "_Tuple2",_0: 0,_1: 15}
       ,_1: {ctor: "_Tuple2",_0: 0,_1: -15}},
-      A2($DragAndDrop.trackMany,$Maybe.Nothing,hover.signal)));
+      A2($Drag.trackMany,$Maybe.Nothing,hover.signal)));
    }();
-   return _elm.Main.values = {_op: _op
-                             ,hover: hover
-                             ,box1: box1
-                             ,box2: box2
-                             ,putInBox: putInBox
-                             ,moveBy: moveBy
-                             ,main: main};
+   return _elm.Main.values = {_op: _op,main: main};
 };</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script></body></html>
