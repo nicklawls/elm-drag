@@ -1,45 +1,52 @@
 module Main (main) where
 
 import Drag exposing (..)
-import Graphics.Input
 import Signal exposing (foldp)
-import Text exposing (fromString)
-import Graphics.Element exposing (layers, leftAligned, sizeOf)
-import Graphics.Collage exposing (collage, outlined, rect, solid, toForm)
-import Color exposing (black)
+import Html exposing (Html)
+import Svg exposing (Svg)
+import Svg.Events
+import Svg.Attributes
 
 
+hover : Signal.Mailbox Bool
 hover =
     Signal.mailbox False
 
 
-box =
-    Graphics.Input.hoverable
-        (Signal.message hover.address)
-        (putInBox (leftAligned (fromString "drag me around")))
+box : (Float,Float) -> Svg
+box (x,y) =
+    Svg.text'
+        [ Svg.Events.onMouseOver (Signal.message hover.address True)
+        , Svg.Events.onMouseOut (Signal.message hover.address False)
+        , Svg.Attributes.x <| toString x
+        , Svg.Attributes.y <| toString y
+        ]
+        [ Svg.text "drag me around" ]
 
 
-putInBox e =
-    let
-        ( sx, sy ) = sizeOf e
-    in
-        layers [ e, collage sx sy [ outlined (solid black) (rect (toFloat sx) (toFloat sy)) ] ]
-
-
+moveBy : (Int,Int) -> (Float,Float) -> (Float,Float)
 moveBy ( dx, dy ) ( x, y ) =
-    ( x + toFloat dx, y - toFloat dy )
+    ( x + toFloat dx, y + toFloat dy )
 
 
+update : Maybe Action -> (Float,Float) -> (Float,Float)
+update m =
+    case m of
+        Just (MoveBy ( dx, dy )) ->
+            moveBy ( dx, dy )
+
+        _ ->
+            identity
+
+
+main : Signal Html
 main =
-    let
-        update m =
-            case m of
-                Just (MoveBy ( dx, dy )) ->
-                    moveBy ( dx, dy )
-
-                _ ->
-                    identity
-    in
-        Signal.map
-            (\p -> collage 200 200 [ Graphics.Collage.move p (toForm box) ])
-            (foldp update ( 0, 0 ) (track False hover.signal))
+    Signal.map
+        (\p -> Svg.svg
+                [ Svg.Attributes.height "200"
+                , Svg.Attributes.width "200"
+                , Svg.Attributes.viewBox "0 0 200 200"
+                ]
+                [ box p ]
+        )
+        (foldp update ( 100, 100 ) (track False hover.signal))
