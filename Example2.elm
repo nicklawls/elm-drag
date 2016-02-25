@@ -1,53 +1,35 @@
 module Main (main) where
 
 import Drag exposing (..)
-import Graphics.Input
 import Signal exposing (foldp)
-import Text exposing (fromString)
-import Graphics.Element exposing (layers, leftAligned, sizeOf)
-import Graphics.Collage exposing (collage, outlined, rect, solid, toForm)
-import Color exposing (black)
+import Html exposing (Html)
+import Svg exposing (Svg)
+import Svg.Events
+import Svg.Attributes
 
 
+hover : Signal.Mailbox (Maybe Int)
 hover =
     Signal.mailbox Nothing
 
 
-box1 =
-    Graphics.Input.hoverable
-        (Signal.message hover.address
-            << \h ->
-                if h then
-                    Just 1
-                else
-                    Nothing
-        )
-        (putInBox (leftAligned (fromString "drag me around")))
+box : Int -> String -> (Float,Float) -> Svg
+box id msg (x,y) =
+    Svg.text'
+        [ Svg.Events.onMouseOver (Signal.message hover.address (Just id) )
+        , Svg.Events.onMouseOut (Signal.message hover.address Nothing)
+        , Svg.Attributes.x <| toString x
+        , Svg.Attributes.y <| toString y
+        ]
+        [ Svg.text msg ]
 
 
-box2 =
-    Graphics.Input.hoverable
-        (Signal.message hover.address
-            << \h ->
-                if h then
-                    Just 2
-                else
-                    Nothing
-        )
-        (putInBox (leftAligned (fromString "and me too")))
-
-
-putInBox e =
-    let
-        ( sx, sy ) = sizeOf e
-    in
-        layers [ e, collage sx sy [ outlined (solid black) (rect (toFloat sx) (toFloat sy)) ] ]
-
-
+moveBy : (Int, Int) -> (Float,Float) -> (Float,Float)
 moveBy ( dx, dy ) ( x, y ) =
-    ( x + toFloat dx, y - toFloat dy )
+    ( x + toFloat dx, y + toFloat dy )
 
 
+main : Signal Html
 main =
     let
         update m =
@@ -62,12 +44,11 @@ main =
                     identity
     in
         Signal.map
-            (\( p1, p2 ) ->
-                collage
-                    200
-                    200
-                    [ Graphics.Collage.move p1 (toForm box1)
-                    , Graphics.Collage.move p2 (toForm box2)
+            (\(p1,p2) -> Svg.svg
+                    [ Svg.Attributes.height "200"
+                    , Svg.Attributes.width "200"
+                    , Svg.Attributes.viewBox "0 0 200 200"
                     ]
+                    [ box 1 "drag me around" p1, box 2 "and me too" p2 ]
             )
-            (foldp update ( ( 0, 15 ), ( 0, -15 ) ) (trackMany Nothing hover.signal))
+            (foldp update ( ( 50, 50 ), ( 150, 150 ) ) (trackMany Nothing hover.signal))

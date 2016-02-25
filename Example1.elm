@@ -1,6 +1,8 @@
 module Main (main) where
 
 import Drag exposing (..)
+-- import Color
+-- import Color.Convert
 import Signal exposing (foldp)
 import Html exposing (Html)
 import Svg exposing (Svg)
@@ -15,14 +17,30 @@ hover =
 
 box : (Float,Float) -> Svg
 box (x,y) =
-    Svg.text'
-        [ Svg.Events.onMouseOver (Signal.message hover.address True)
-        , Svg.Events.onMouseOut (Signal.message hover.address False)
-        , Svg.Attributes.x <| toString x
-        , Svg.Attributes.y <| toString y
+    Svg.g
+        []
+        [ Svg.rect
+            [ Svg.Events.onMouseOver (Signal.message hover.address True)
+            , Svg.Events.onMouseOut (Signal.message hover.address False)
+            , Svg.Attributes.x <| toString x
+            , Svg.Attributes.y <| toString y
+            , Svg.Attributes.height "30"
+            , Svg.Attributes.width "115"
+            , Svg.Attributes.fill "white"
+            , Svg.Attributes.stroke "black"
+            , Svg.Attributes.strokeWidth "1"
+            ]
+            []
+        , Svg.text'
+            [ Svg.Events.onMouseOver (Signal.message hover.address True)
+            , Svg.Events.onMouseOut (Signal.message hover.address False)
+            , Svg.Attributes.x <| toString x
+            , Svg.Attributes.y <| toString <| y + 20
+            , Svg.Attributes.textAnchor "right"
+            , Svg.Attributes.alignmentBaseline "right"
+            ]
+            [ Svg.text "drag me around" ]
         ]
-        [ Svg.text "drag me around" ]
-
 
 moveBy : (Int,Int) -> (Float,Float) -> (Float,Float)
 moveBy ( dx, dy ) ( x, y ) =
